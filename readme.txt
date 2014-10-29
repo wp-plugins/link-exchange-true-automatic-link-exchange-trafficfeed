@@ -3,8 +3,8 @@ Contributors: iquchint, trafficfeed
 Donate link: http://www.trafficfeed.com/
 Tags: link exchange, automatic backlinks, SEO,website traffic, automatic link exchange, search engine  
 optimization, webmaster tools, link ads, traffic generation, link partners
-Requires at least: 3.0
-Tested up to: 3.8
+Requires at least: 3.5
+Tested up to: 4.0
 Stable tag: 1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -14,49 +14,33 @@ your Sites from one Trafficfeed.com account (free account).
 
 == Description ==
 
-* This is a very powerful addition to any site. Start using it today and start seeing results.
+* This is a very powerful addition to any site. 
 
-TRUE Automatic Link Exchange / TRUE AUTOMATIC BACKLINK BUILDING
-In this version we have added ability to register and add your site right from your WP admin panel (after plugin is installed) . Making the whole process much faster and integration much more seamless.
-
-Use this plugin to control all aspects of your link exchange, automatic  backlink generation, regular link exchange,  ABC exchange or link ads (sales and  
-purchases) and much more. We are the only ones that give you a range of tools that allow you to do a true automatic link exchange or automatic backlinks. Just set criteria and system will do everything for you, you can monitor everything and do adjustments to perfect it for what you are doing.  (or do it all manually your choice)
-
+TRUE Automatic Link Exchange / TRUE AUTOMATIC BACKLINK BUILDING 
+In this version we have added ability to register and completely install plugin right from your wordpress control panel.
+Use this plugin to control all aspects of your link exchange, automatic  backlink generation, regular link exchange,  ABC exchange or link ads (sales and  purchases) and much more. 
+We are the only ones that give you a range of tools that allow you to do a true automatic link exchange or automatic backlinks. 
+Just set criteria and system will do everything for you. (If you choose not to use automatic link exchange you can. Or you can choose only to do automatic link exchange with some of your pages. )
 *  Read and see video here: http://www.trafficfeed.com/cms/seo-tools-overview/
 
 How to use this plugin?
-
 We have modified the plugin to make it easier to set up and start using.
-Plugin will have Trafficfeed widget now which will allow you to drag and drop it. (You can still set up 
-Trafficfeed widget and place it where ever you would like in a post, page, side bar, header, footer etc.)
-You can specify what you would like system to display link window (a div where links will appear) or a 
+Plugin will have Trafficfeed widget now which will allow you to drag and drop it. (You can still place
+Trafficfeed widget where ever you would like in a post, page, side bar, header, footer etc.)
+
+You can specify what you would like system to display - link window (where links will appear) or a 
 link directory (which will allow you to gather partners outside of Trafficfeed network; it comes with a built in form).
 
+::::Option 1 Link Window::::: (recommended)
+All exchanges for particular page will display.(only for that page, you can put one link on one page and 2 different links on  another page and system will only display what you have specified)
 
-1.  Within your wordpress admin panel, please Click on Appearance => Widgets then you will fine Trafficfeed Widget just drag and drop in your sidebar panel thats it!!
-
-2.  Within your wordpress admin panel, please Click on Appearance => Widgets then  on the right hand side select where you would like to place TrafficFeed link in,  then drag "TEXT" widget where you would like to use TrafficFeed.
-
-Use shortcode for display link exchanges.
-[TF-SHOW show="receive_div"]. For displaying page link exchanges.
-[TF-SHOW show="receive_dir"]. For displaying Link directory Click "Save" after you have included the code, etcAs simple as that.
-
-
-*  If you have any questions or having difficulties, please open support ticket, we are here to help.
-
-Link Window:::::
-
-All exchanges for particular page will display.(only for that page, you can put one link on one page and 2 different links on  
-another page and system will only put what you have specified)
-
-Link Directory:::::
-
+:::::Option 2 Link Directory:::::
 All of the exchanges for your site, will show on a page where you will use this  
-short code [TF-SHOW show="receive_dir"].
+short code [TF-SHOW show="receive_dir"] 
 
-Note : You can use short code in text widget or on page or in a post, just place the  
-short code and you are done. So if you want to place links of your partners inside a  
-blog post you can do that, and just place one link or multiple links (up to you) .  
+Note : You can use short code in text widget or on page or in a post. Just place the  short code and you are done. 
+So if you want to place links of your partners inside a  
+blog post you can do that.   
 Similarly you can place link(s) on page(s) that you choose to.
 (VERY USEFUL Not to clutter one page or post with too many links and what ever you  
 select to appear from your trafficfeed account will appear on that particular page)
@@ -68,7 +52,7 @@ select to appear from your trafficfeed account will appear on that particular pa
 
 = Video Tutorial =
 
-http://www.youtube.com/watch?v=u8FSTOn-P2o
+https://www.youtube.com/watch?v=FPcGAxvVw0o
 
 == Installation ==
 
@@ -76,26 +60,36 @@ http://www.youtube.com/watch?v=u8FSTOn-P2o
 2. Activate the plugin "Wp-Trafficfeed" through the 'Plugins' menu in WordPress
 3. You will get plugin helps from  TF -> Settings 
 
-== Frequently asked questions ==
-Q.Can I have links appear in a side bar or a footer or a header on a particular page?
+Or
 
-A. You can use short code in text widget and just drag and drop that widget where  
-you would like links to appear. If you want to place links on  a page or in a post,  
-just place the short code where you would like links to appear. So if you want to  
-place your partner's link inside a blog post you can do that. If you want to place  
+1.  Look for Trafficfeed link exchange plugin from plugin section of your wordpress installation and Click Install. System will guide you through the installation steps.
+2. Within your wordpress admin panel, please Click on Appearance => Widgets then you will find Trafficfeed Widget,  just drag and drop in your sidebar panel that is it.
+
+Use shortcode(s) to show exchanges inside a post or within the text on page.(You must add that page to your Trafficfeed account to be able to use it.
+ [TF-SHOW show="receive_div"]. For displaying Link Window.
+ [TF-SHOW show="receive_dir"]. For displaying Link Directory
+ 
+*  If you have any questions or having difficulties, please open support ticket, we are here to help or if you can’t login please use “Contact Us” form.
+
+
+== Frequently asked questions ==
+Q.Can I have links appear in a side bar or a footer or a header or on a particular page?
+
+A. You can use short code in text widget to display your links in footer, header, sidebar. 
+If you want to place links on  a page or in a post, just place the short code where you would like links to appear. 
+So if you want to place your partner's link inside a blog post you can do that. If you want to place  
 just one link or multiple links (up to you) . Similarly you can place links on pages  
-that you choose to.(Different pages – could have different links on them)
+that you choose to.(Different pages/posts – can have different links on them)
 
 Q. Where do I control all of the links from ?
 
 A. You control your site(s) and page(s) from one centralized location at  
-http://www.trafficfeed.com  where you can open free account.
+http://www.trafficfeed.com  
+Open your free account Now.
 
 Q.Is your system free to use ?
 
-A. Everyone can sign up and use trafficfeed.com system for free, however we provide  
-a range of services to accommodate everyone and some of those services are paid  
-services.
+A. Everyone can sign up and use trafficfeed.com system for free. We have paid services too.
 
 
 == Screenshots ==
@@ -107,8 +101,8 @@ services.
 
 == Changelog ==
 
-= 2.0.0 =
+= 3.0.0 =
 * Wp-Trafficfeed
 
 == Upgrade notice ==
-We have added ability to register right from your WP admin panel and add site from the same place. Making the whole process much faster and much more seamless.
+We have added ability to register, add site and pages, right from your WP admin Making the whole process much faster and much more seamless.

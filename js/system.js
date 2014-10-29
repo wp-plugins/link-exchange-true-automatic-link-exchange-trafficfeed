@@ -78,6 +78,34 @@ jQuery(document).ready(function(e) {
 		return false;
 	});
 	
+	jQuery('#tf_add_site_pages').submit(function(e) {
+	
+   		jQuery.ajax({
+	   		url:tf_ajax.ajaxurl,
+			type:'POST',
+			
+			data:'action=tf_manage_pages&'+jQuery('#tf_add_site_pages').serialize(),
+			beforeSend:function(){
+				jQuery('.result').html('');
+				jQuery('#btn_tf_add_pages').attr("disabled", true);
+				jQuery('#btn_tf_add_pages').fadeTo('slow','0.4');
+				jQuery('#btn_tf_add_pages').attr('value','Please Wait...');
+			},
+			success: function(response){
+				
+				jQuery('.result').html(response);
+			},
+			error:function(response){
+			},
+			complete:function(){
+				jQuery('#btn_tf_add_pages').attr('value','ADD SELECTED PAGES');
+				jQuery('#btn_tf_add_pages').fadeTo('slow','1');
+				jQuery('#btn_tf_add_pages').attr("disabled", false);
+			}
+		});
+		return false;
+	});
+
 	jQuery('#frm_tf_login').submit(function(e) {
 	
    		jQuery.ajax({

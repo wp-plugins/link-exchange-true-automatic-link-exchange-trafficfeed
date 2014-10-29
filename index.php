@@ -2,8 +2,8 @@
 /* 
 Plugin Name: Wp-Trafficfeed
 Description: Wordpress plugin for link exchange, automatic link exchange/automatic backlinks.
-Author: Iqbal Chintaman and www.TrafficFeed.com
-Version: 2.2 
+Author: Iqbal Husain(iQ) and www.TrafficFeed.com
+Version: 3.0 
 */ 
 
 class tf{
@@ -14,14 +14,14 @@ class tf{
 
 	public function __construct() {
 		$this->plugin_url = plugin_dir_url(__FILE__);
-		//$this->service_url = 'http://192.168.1.16/tf/services.php';
-		$this->service_url = 'http://www.trafficfeed.com/services.php';
+		$this->service_url = 'http://www.trafficfeed.com/services_requests.php';
 		$this->plugin_folder = dirname (__FILE__); 
 		add_action( 'init', array($this, $this->prefix.'tf_plugin_init' ) );
 		
 	}
 	
 	function tf_plugin_init(){
+		
 		wp_enqueue_script('tf_ajax',   $this->plugin_url . '/js/system.js', array( 'jquery'));  
 		wp_localize_script( 'tf_ajax', 'tf_ajax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' )));
 		add_action( 'wp_ajax_tf_login',array( &$this, 'tf_login'));
@@ -29,13 +29,90 @@ class tf{
 		add_action( 'wp_ajax_tf_register',array( &$this, 'tf_register'));
 		add_action( 'wp_ajax_tf_domian_activate',array( &$this, 'tf_domian_activate'));
 		add_action( 'wp_ajax_tf_manage_domain',array( &$this, 'tf_manage_domain'));
+		add_action( 'wp_ajax_tf_manage_pages',array( &$this, 'tf_manage_pages'));
 		add_action( 'wp_ajax_tf_reset',array( &$this, 'tf_reset'));
 		add_filter('widget_text', 'do_shortcode');
 		add_shortcode("TF-SHOW", array($this, 'tf_shortcode')); 
 		add_action( 'admin_menu', array( &$this, 'tf_menu' ) );
+		add_action( 'admin_notices', array( &$this, 'tf_notices' ) );
+		add_action( 'admin_enqueue_scripts',array( &$this, 'tf_enqueue_scripts' ));
+		
 		
 	}
 	
+
+
+
+	function tf_enqueue_scripts() {
+	    // find out which pointer IDs this user has already seen
+	    $seen_it = explode( ',', (string) get_user_meta( get_current_user_id(), 'dismissed_wp_pointers', true ) );
+	    // at first assume we don't want to show pointers
+	    $do_add_script = false;
+	    // Handle our first pointer announcing the plugin's new settings screen.
+		// check for dismissal of pksimplenote settings menu pointer 'pksn1'
+		if ( ! in_array( 'tf_menu_seen', $seen_it ) ) {
+		   // flip the flag enabling pointer scripts and styles to be added later
+		   $do_add_script = true;
+		   // hook to function that will output pointer script just for pksn1
+		   add_action( 'admin_print_footer_scripts', array( $this, 'simplenote_pksn1_footer_script' ) );
+		} // end if
+
+	
+
+				// now finally enqueue scripts and styles if we ended up with do_add_script == TRUE
+		if ( $do_add_script ) {
+		   		// add JavaScript for WP Pointers
+		   wp_enqueue_script( 'wp-pointer' );
+		   // add CSS for WP Pointers
+		   wp_enqueue_style( 'wp-pointer' );
+		} // end if checking do_add_script
+	} // end pksimplenote_admin_scripts()
+
+	function simplenote_pksn1_footer_script() {
+    	// Build the main content of your pointer balloon in a variable
+    	$pointer_content = '<h3>Start Exchanges</h3>'; // Title should be <h3> for proper formatting.
+    	$pointer_content .= '<p>Click to Manage Account and get to know more about trafficfeed.com.</p>';
+   	?>
+	    <script type="text/javascript">// <![CDATA[
+	    jQuery(document).ready(function($) {
+	        /* make sure pointers will actually work and have content */
+	        if(typeof(jQuery().pointer) != 'undefined') {
+	            $('#toplevel_page_tf_admin_menu').pointer({
+	                content: '<?php echo $pointer_content; ?>',
+	                position: {
+	                    at: 'left bottom',
+	                    my: 'left top'
+	                },
+	                close: function() {
+	                    $.post( ajaxurl, {
+	                        pointer: 'tf_menu_seen',
+	                        action: 'dismiss-wp-pointer'
+	                    });
+	                }
+	            }).pointer('open');
+	        }
+	    });
+    	// ]]></script>
+    <?php
+} // end simplenote_pksn2_footer_script())
+
+	function tf_notices(){
+		
+		$opt_hide = get_option("dismiss_tf_admin_notices");
+	
+		if(!$opt_hide) {
+			if (!is_active_widget( false, false, "widget_trafficfeed", true ) ) {
+			 	$notice = '<div class="error">';
+	         	$notice .= "<p><strong>Please click on the link <a href='".admin_url('widgets.php')."'>here</a>: INSTALL WIDGET Then just drag and drop 'Trafficfeed Widget' into your side bar. If you don't know how to do it <a href='https://www.youtube.com/watch?v=FPcGAxvVw0o&feature=youtu.be' target='_blank'>here</a> is the video which will help you to install the plugin.</strong></p>";
+	         	
+	         	$notice .= '<p><strong><a href="'.site_url().'/wp-admin/?tf-dismiss=dismiss_tf_admin_notices">Dismiss Notice</a></strong></p>';
+	         	
+	    	 	$notice  .= '</div>';
+	    	 	echo $notice;
+	    	}
+    	}
+	}
+
 	function tf_manage_domain(){
 		$token = get_option('tf_token');
 		if(!$token){
@@ -63,12 +140,8 @@ class tf{
 		if($response){
 		  $result = json_decode($response);
 		  if($result->status==1){
-			  echo "<script>jQuery(':input','#tf_add_site')
-					 .not(':button, :submit, :reset, :hidden')
-					 .val('')
-					 .removeAttr('checked')
-					 .removeAttr('selected');";
-			  echo "jQuery('.tf_success').html('".$result->msg."');jQuery('.tf_success').show();</script>";
+				$redirect_url = admin_url( 'admin.php?page=tf_settings' );
+				echo "<script>window.location.href='".$redirect_url."';</script>";	
 		  }else {
 			  echo "<script>jQuery('.tf_error').html('".$result->msg."');jQuery('.tf_error').show();</script>";
 		  }
@@ -78,6 +151,66 @@ class tf{
 	  die();
 	}
 	
+	function tf_manage_pages(){
+		$token = get_option('tf_token');
+		if(!$token){
+			die();	
+		}
+	
+		$pages_url = array();
+		if(isset($_POST['add_page_tf']) && count($_POST['add_page_tf'])>0){
+			  foreach($_POST['add_page_tf'] as $site_page){
+				if($site_page == 0){
+
+					$pages_url[] = trim(urlencode(home_url())); 	
+				}else{  
+			  		$pages_url[] = trim(urlencode(get_permalink($site_page))); 		
+				}
+			  }
+		}else{
+			 echo "<div class='tf-alert-box tf-error'>Select page(s) to exchnage</div>";
+			 die();
+		}
+		
+		$home_url = urlencode(home_url());
+		$domain   = urlencode($token['domain']);
+		$username = urlencode($token['username']);
+		$token    = urlencode($token['token']);
+		$fields = array(
+            'token' 	=> $token,
+            'username'  => $username,
+            'domain'    => $domain,
+            'username'  => $username,
+            'act'       => 'manage_pages',
+            'site_page' => $pages_url
+        );
+		$string ="token=$token&username=$username&domain=$domain";
+		$string .="&site_page=$pages_url";
+		$field_string = http_build_query($fields);
+		
+		$ch = curl_init($this->service_url);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1); 
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_URL,$this->service_url);
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS,$field_string);
+		$response = curl_exec ($ch);
+		
+		if($response){
+		  $result = json_decode($response);
+		  if($result->status==1){
+			 
+				$redirect_url = admin_url( 'admin.php?page=tf_settings' );
+				echo "<script>window.location.href='".$redirect_url."';</script>";
+		  }else {
+			  echo "<div class='tf-alert-box tf-error'>".$result->message."</div>";
+		  }
+	   }
+	   
+	  curl_close ($ch); 
+	  die();
+	}
+
 	function tf_register(){
 			$tf_first_name = urlencode($_POST['tf_first_name']);
 			$tf_last_name = urlencode($_POST['tf_last_name']);
@@ -88,6 +221,19 @@ class tf{
 			$string ="first_name=$tf_first_name&last_name=$tf_last_name";
 			$string .="&username=$tf_username&email=$tf_email";
 			$string .="&password=$tf_password&cpassword=$tf_c_password";
+			
+			$title 			= urlencode($_POST['title']);
+			$tf_category 	= urlencode($_POST['tf_category']);
+			$domain_url 	= urlencode($_POST['domain']);
+			$description 	= urlencode($_POST['description']);
+			$home_url 		= urlencode(home_url());
+			$domain         = $this->domain_url(site_url()); 
+			$domain   		= urlencode($domain);
+			$username 		= urlencode($token['username']);
+			$token    		= urlencode($token['token']);
+			$string .= "&domain=$domain";
+			$string .= "&title=$title&category=$tf_category";
+			$string .= "&domain_url=$domain_url&description=$description&url=$home_url";
 			$ch = curl_init($this->service_url);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1); 
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -101,12 +247,14 @@ class tf{
 				$result = json_decode($response);
 				
 				if($result->status==1){
-					echo "<script>jQuery(':input','#frm_tf_reg')
-					 .not(':button, :submit, :reset, :hidden')
-					 .val('')
-					 .removeAttr('checked')
-					 .removeAttr('selected');";
-					echo "jQuery('.tf_error').hide();jQuery('.tf_success').html('".$result->message."');jQuery('.tf_success').show();</script>";
+					
+					$domain = $this->fix_url(trim(home_url()));
+					$token['username']=trim($tf_username);
+					$token['domain']=$domain;
+					$token['token']=$result->token;
+					update_option('tf_token',$token);
+					$redirect_url = admin_url( 'admin.php?page=tf_settings' );
+					echo "<script>window.location.href='".$redirect_url."';</script>";
 				}else {
 					echo "<script>jQuery('.tf_success').hide();jQuery('.tf_error').html('".$result->message."');jQuery('.tf_error').show();</script>";
 				}
@@ -171,7 +319,8 @@ class tf{
 					$token['domain']=$domain;
 					$token['token']=$result->login->token;
 					update_option('tf_token',$token);
-					echo "<script>window.location.href=window.location.href;</script>";
+					$redirect_url = admin_url( 'admin.php?page=tf_settings' );
+					echo "<script>window.location.href='".$redirect_url."';</script>";
 				}else {
 					echo "<script>jQuery('.tf_error_msg').html('".$result->login->message."');jQuery('.tf_error_msg').show();</script>";
 				}
@@ -277,9 +426,27 @@ class tf{
 	}
 	
 	function tf_menu() {
-		add_menu_page('TF Help', 'TF Help', 'administrator', 'tf_admin_menu', array( &$this, 'tf_help' ),plugins_url('/icon/icon.ico', __FILE__));
-		add_submenu_page( "tf_admin_menu", 'TF Settings', 'TF Settings', 5,'tf_settings',  array($this, 'tf_settings' ));
+		add_menu_page('tf-admin-menu' , 'Trafficfeed', 'manage_options', 'tf_admin_menu', array( &$this, 'tf_help' ),plugins_url('/icon/icon.ico', __FILE__),1);
+		add_submenu_page('tf_admin_menu', 'Trafficfeed Help', 'Help', 'manage_options', 'tf_admin_menu',  array( &$this, 'tf_help' ));
+		add_submenu_page( "tf_admin_menu", 'Manage Account', 'Manage Account', 'manage_options','tf_settings',  array($this, 'tf_settings' ));
+		add_submenu_page( null, 'TF Register', 'TF Register',  'manage_options','tf_register_form',  array($this, 'tf_register_form' ));
+		add_submenu_page( null, 'TF Login', 'TF Login', 'manage_options','tf_login_form',  array($this, 'tf_login_form' ));
+		add_submenu_page( null, 'Add new site', 'Add new site', 'manage_options','tf_site_info',  array($this, 'tf_site_info' ));
 	}
+	
+	function tf_site_info(){
+		include('includes/tf-site-info.php');
+	}
+
+
+	function tf_register_form(){
+		include('includes/tf-register.php');
+	}
+
+	function tf_login_form(){
+		include('includes/tf-login.php');
+	}
+
 	function tf_help(){
 		include('help.php');
 	}
@@ -293,8 +460,25 @@ class tf{
 		return $response;
 	}
 	
+	/* Function to get site pages */
+	function get_all_pages($type=array("page",'post')){
+		global $wpdb;
+		$pages = array();
+		if(count($type)>0){
+			$post_type = "";
+			foreach($type as $p_type){
+				$post_type .= "'".$p_type."',";
+			}
+			$post_type = rtrim($post_type,",");
+			
+			$pages = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."posts"." WHERE post_type IN ($post_type) AND post_status = 'publish'");
+		}
+		return $pages;
+	}
+
+
 	function tf_check_domain($token=array()){
-		if(count($token)>0){
+		if(isset($token)){
 			
 			$domain   = urlencode($token['domain']);
 			$username = urlencode($token['username']);
@@ -304,7 +488,8 @@ class tf{
 			
 			return $response;
 		}else{
-			$domain = urlencode(home_url());
+			
+			$domain =  $this->domain_url(site_url());
 			//die($domain);
 			//echo $this->service_url."?act=domain_check&domain=$domain";
 			$response = file_get_contents($this->service_url."?act=domain_check&domain=$domain");
@@ -313,6 +498,16 @@ class tf{
 			return $response;
 		}
 	}
+
+	function tf_check_domain_info(){
+		
+		$domain =  $this->domain_url(site_url());
+		$response = file_get_contents($this->service_url."?act=domain_status&domain=$domain");
+		return $response;
+		
+	}
+
+
 	function tf_shortcode( $atts ) { 
 		extract( shortcode_atts( array( 
 			'show' => '' 
@@ -346,6 +541,7 @@ class tf{
 		}
 		return $this->div_html;
 	}
+
 	public function receiveDiv() {
 		if($this->encoding) {
 			return iconv('UTF-8', $this->encoding, $this->div_html);
@@ -382,12 +578,31 @@ class tf{
 		return null;
 	}
 
+	function domain_url($url) {
+   		if (substr($url, 0, 4) == 'www.') { return $url; }
+		if (substr($url, 0, 7) == 'http://') { 
+			if (substr($url, 0, 10) == 'http://www') { 
+				return substr($url, 7); 
+			}else{
+				return "www.".substr($url, 7); 
+			}
+		}
+		
+		if (substr($url, 0, 8) == 'https://') { 
+			if (substr($url, 0, 11) == 'https://www') { 
+				return substr($url, 8); 
+			}else{
+				return "www.".substr($url, 8); 
+			}
+		}
+		return  $url;
+	}
 }
 class tf_widget_plugin extends WP_Widget {
 
 	// constructor
 	function tf_widget_plugin(){
-		$widget_ops = array( 'classname' => 'tf_widget_plugin', 'description' => 'Trafficfeed Widget' );
+		$widget_ops = array( 'classname' => 'tf_widget_plugin', 'description' => 'Let’s Link The Whole World Together.Trafficfeed Widget to show your partner’s link exchanges.' );
 		$control_ops = array( 'id_base' => 'widget_trafficfeed' );
 		$this->WP_Widget( 'widget_trafficfeed', 'Trafficfeed Widget', $widget_ops, $control_ops );
 	}
@@ -411,8 +626,8 @@ class tf_widget_plugin extends WP_Widget {
           <?php _e( 'Display Type:' ) ?>
           </label>
           <select id="<?php echo $this->get_field_id( 'tf_link_type' ); ?>" name="<?php echo $this->get_field_name( 'tf_link_type' ); ?>">
-          		<option value="1" <?php if($instance['tf_link_type']==1) { ?> selected="selected" <?php } ?>>Pages Link Exchange</option>
-          		<option value="2" <?php if($instance['tf_link_type']==2) { ?> selected="selected" <?php } ?>>Directory Link Exchange</option>
+          		<option value="1" <?php if($instance['tf_link_type']==1) { ?> selected="selected" <?php } ?>>Link Window (recommended)</option>
+          		<option value="2" <?php if($instance['tf_link_type']==2) { ?> selected="selected" <?php } ?>>Link Directory</option>
           </select>
          
         </p>
@@ -460,6 +675,8 @@ class tf_widget_plugin extends WP_Widget {
 		echo $html;
 
 	}
+
+	
 }
 add_action( 'widgets_init', 'load_tf_widgets' );	
 // Registering Custom Widget
@@ -467,3 +684,7 @@ function load_tf_widgets() {
 	register_widget('tf_widget_plugin');
 }
 $tf = new tf();
+if(isset($_REQUEST['tf-dismiss']) && $_REQUEST['tf-dismiss'] = 'dismiss_tf_admin_notices'){
+	update_option( 'dismiss_tf_admin_notices', "hide" );
+	echo "<script>window.location = '".admin_url()."'</script>";
+}
