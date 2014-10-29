@@ -69,7 +69,7 @@ Use shortcode(s) to show exchanges inside a post or within the text on page.(You
  [TF-SHOW show="receive_div"]. For displaying Link Window.
  [TF-SHOW show="receive_dir"]. For displaying Link Directory
  
-*  If you have any questions or having difficulties, please open support ticket, we are here to help or if you can't login please use “Contact Us” form.
+*  If you have any questions or having difficulties, please open support ticket, we are here to help or if you can't login please use "Contact Us" form.
 
 
 == Frequently asked questions ==
