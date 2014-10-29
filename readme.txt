@@ -12,9 +12,6 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Link Exchange, Automatic Link Exchange, Link Ads, Traffic Generation, Control all of  
 your Sites from one Trafficfeed.com account (free account).
 
-= Video Tutorial =
-
-https://www.youtube.com/watch?v=FPcGAxvVw0o
 
 == Description ==
 
@@ -92,6 +89,9 @@ Q.Is your system free to use ?
 
 A. Everyone can sign up and use trafficfeed.com system for free. We have paid services too.
 
+= Video Tutorial =
+
+https://www.youtube.com/watch?v=FPcGAxvVw0o
 
 == Screenshots ==
 
