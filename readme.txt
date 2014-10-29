@@ -12,6 +12,10 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Link Exchange, Automatic Link Exchange, Link Ads, Traffic Generation, Control all of  
 your Sites from one Trafficfeed.com account (free account).
 
+= Video Tutorial =
+
+https://www.youtube.com/watch?v=FPcGAxvVw0o
+
 == Description ==
 
 * This is a very powerful addition to any site. 
@@ -50,9 +54,6 @@ select to appear from your trafficfeed account will appear on that particular pa
 
 * Trafficfeed.com's all exchanges can show in widget or page with shortcode
 
-= Video Tutorial =
-
-https://www.youtube.com/watch?v=FPcGAxvVw0o
 
 == Installation ==
 
