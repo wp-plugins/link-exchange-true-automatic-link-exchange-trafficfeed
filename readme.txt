@@ -4,14 +4,13 @@ Donate link: http://www.trafficfeed.com/
 Tags: link exchange, automatic backlinks, SEO,website traffic, automatic link exchange, search engine  
 optimization, webmaster tools, link ads, traffic generation, link partners
 Requires at least: 3.5
-Tested up to: 4.0
+Tested up to: 3.9.1
 Stable tag: 1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Link Exchange, Automatic Link Exchange, Link Ads, Traffic Generation, Control all of  
 your Sites from one Trafficfeed.com account (free account).
-
 
 == Description ==
 
@@ -51,6 +50,9 @@ select to appear from your trafficfeed account will appear on that particular pa
 
 * Trafficfeed.com's all exchanges can show in widget or page with shortcode
 
+= Video Tutorial =
+
+https://www.youtube.com/watch?v=FPcGAxvVw0o
 
 == Installation ==
 
@@ -67,7 +69,7 @@ Use shortcode(s) to show exchanges inside a post or within the text on page.(You
  [TF-SHOW show="receive_div"]. For displaying Link Window.
  [TF-SHOW show="receive_dir"]. For displaying Link Directory
  
-*  If you have any questions or having difficulties, please open support ticket, we are here to help or if you can't login please use 'Contact Us' form.
+*  If you have any questions or having difficulties, please open support ticket, we are here to help or if you can't login please use "Contact Us" form.
 
 
 == Frequently asked questions ==
@@ -89,9 +91,6 @@ Q.Is your system free to use ?
 
 A. Everyone can sign up and use trafficfeed.com system for free. We have paid services too.
 
-= Video Tutorial =
-
-https://www.youtube.com/watch?v=FPcGAxvVw0o
 
 == Screenshots ==
 
