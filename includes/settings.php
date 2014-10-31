@@ -119,7 +119,13 @@ if($token) {
     	    if($user->status =='InActive'){
 				echo "<div class='tf_verify'>Please go to your inbox to verify your email address: <strong> ".$user->email." </strong> <br>
 				After verifying your trafficfeed account you can start adding and exchanging pages with other verified TrafficFeed users.
-				</div>";
+				</div>";?>
+                <div class='tf_verify' style="border:1px solid #FFF; padding:10px;margin:5px;">
+                <div style="margin:10px 0px">PLEASE NOTE IF YOU HAVE CHECKED YOUR INBOX AND YOUR JUNK FOLDER  AND DON’T SEE EMAIL VERYFICATION FROM US THEN FOLLOW STEP BELOW.    
+Email Verification Option #2</div>
+				<div>If you have registered for TrafficFeed account and didn’t receive and email from us to verify your email address. Please send us an email from your email that you REGISTERED with, to our email address  webmaster@trafficfeed.com. PLEASE PUT : “PLEASE ACTIVATE MY EMAIL NOW” in the subject line.<br /><br />Thank You.<br /><a href="http://www.trafficfeed.com" target="_blank" style="color:#fff;">Team Trafficfeed.</a></div>
+                </div>
+				<?php
 			} else { ?>
           <div id="">
             <h3>Domain Information</h3>
