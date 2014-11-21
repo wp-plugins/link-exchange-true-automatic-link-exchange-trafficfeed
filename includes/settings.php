@@ -20,7 +20,7 @@
     </div>
     <?php include('steps.php'); ?>
     <?php if($all_steps){
-  		echo "<div class=\"tf-alert-box tf-success\" style=\"width:95%\">Congratulation!!! You have successfully finished all steps...enjoy exchanging...</div>";
+  		echo "<div class=\"tf-alert-box tf-success\" style=\"width:95%\">Congratulation!!! You have successfully finished all steps...Enjoy exchanging!!!</div>";
   	}?>
     <?php } 
 	if(!$token) {

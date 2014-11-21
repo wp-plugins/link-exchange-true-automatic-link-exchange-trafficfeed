@@ -3,7 +3,7 @@
 Plugin Name: Wp-Trafficfeed
 Description: Wordpress plugin for link exchange, automatic link exchange/automatic backlinks.
 Author: Iqbal Husain(iQ) and www.TrafficFeed.com
-Version: 3.0 
+Version: 3.1 
 */ 
 
 class tf{
@@ -273,7 +273,7 @@ class tf{
 			$domain   = urlencode($token['domain']);
 			$username = urlencode($token['username']);
 			$token    = urlencode($token['token']);
-			$response = file_get_contents($this->service_url."?act=activate_domain&domain=$domain&username=$username&token=$token");
+			$response = $this->send_request($this->service_url."?act=activate_domain&domain=$domain&username=$username&token=$token");
 		
 			$response = json_decode($response);
 			
@@ -341,7 +341,7 @@ class tf{
 			$username = urlencode($token['username']);
 			$token    = urlencode($token['token']);
 			$url = $this->service_url."?act=user_info&domain=$domain&username=$username&token=$token";
-			$user = file_get_contents($url);
+			$user = $this->send_request($url);
 			
 			$user = json_decode($user);
 			return $user;
@@ -384,6 +384,7 @@ class tf{
 			CURLOPT_AUTOREFERER    => true,     // set referer on redirect
 			CURLOPT_CONNECTTIMEOUT => 180,      // timeout on connect
 			CURLOPT_TIMEOUT        => 180,      // timeout on response
+			CURLOPT_USERAGENT	   => "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)",
 		 
 		);
 		$ch      = curl_init( $url );
@@ -456,7 +457,8 @@ class tf{
 	}
 	
 	function get_tf_categories(){
-		$response = file_get_contents($this->service_url."?act=categories");
+		
+		$response = $this->send_request($this->service_url."?act=categories");
 		return $response;
 	}
 	
@@ -484,7 +486,7 @@ class tf{
 			$username = urlencode($token['username']);
 			$token    = urlencode($token['token']);
 			
-			$response = file_get_contents($this->service_url."?act=domain_check&domain=$domain&username=$username&token=$token");
+			$response = $this->send_request($this->service_url."?act=domain_check&domain=$domain&username=$username&token=$token");
 			
 			return $response;
 		}else{
@@ -492,7 +494,7 @@ class tf{
 			$domain =  $this->domain_url(site_url());
 			//die($domain);
 			//echo $this->service_url."?act=domain_check&domain=$domain";
-			$response = file_get_contents($this->service_url."?act=domain_check&domain=$domain");
+			$response = $this->send_request($this->service_url."?act=domain_check&domain=$domain");
 			
 			
 			return $response;
@@ -502,7 +504,7 @@ class tf{
 	function tf_check_domain_info(){
 		
 		$domain =  $this->domain_url(site_url());
-		$response = file_get_contents($this->service_url."?act=domain_status&domain=$domain");
+		$response = $this->send_request($this->service_url."?act=domain_status&domain=$domain");
 		return $response;
 		
 	}
