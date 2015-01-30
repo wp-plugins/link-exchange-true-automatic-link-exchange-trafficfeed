@@ -1,9 +1,9 @@
-<?php 
+﻿<?php 
 /* 
 Plugin Name: Wp-Trafficfeed
 Description: Wordpress plugin for link exchange, automatic link exchange/automatic backlinks.
 Author: Iqbal Husain(iQ) and www.TrafficFeed.com
-Version: 3.1 
+Version: 3.2 
 */ 
 
 class tf{
@@ -21,9 +21,9 @@ class tf{
 	}
 	
 	function tf_plugin_init(){
-		
+		wp_enqueue_script('o_loader',   $this->plugin_url . '/js/o_loader/js/jquery.oLoader.js', array( 'jquery'));
 		wp_enqueue_script('tf_ajax',   $this->plugin_url . '/js/system.js', array( 'jquery'));  
-		wp_localize_script( 'tf_ajax', 'tf_ajax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' )));
+		wp_localize_script( 'tf_ajax', 'tf_ajax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ),'pluginurl' => $this->plugin_url));
 		add_action( 'wp_ajax_tf_login',array( &$this, 'tf_login'));
 		add_action( 'wp_ajax_tf_logout',array( &$this, 'tf_logout'));
 		add_action( 'wp_ajax_tf_register',array( &$this, 'tf_register'));
@@ -115,6 +115,7 @@ class tf{
 
 	function tf_manage_domain(){
 		$token = get_option('tf_token');
+                
 		if(!$token){
 			die();	
 		}
@@ -130,6 +131,7 @@ class tf{
 		$string .="&title=$title&category=$tf_category";
 		$string .="&domain_url=$domain_url&description=$description&url=$home_url";
 		$ch = curl_init($this->service_url);
+                
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1); 
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_URL,$this->service_url);
@@ -159,12 +161,22 @@ class tf{
 	
 		$pages_url = array();
 		if(isset($_POST['add_page_tf']) && count($_POST['add_page_tf'])>0){
+                   
 			  foreach($_POST['add_page_tf'] as $site_page){
+                              
 				if($site_page == 0){
 
-					$pages_url[] = trim(urlencode(home_url())); 	
+					//$pages_url[] = trim(urlencode(home_url())); 	
+                                        $pages_url[] = array(
+                                            'url'=> trim(urlencode(home_url())),
+                                            'title'=> get_bloginfo('name')
+                                        );
 				}else{  
-			  		$pages_url[] = trim(urlencode(get_permalink($site_page))); 		
+			  		//$pages_url[] = trim(urlencode(get_permalink($site_page))); 
+                                    $pages_url[] = array(
+                                            'url'=> trim(urlencode(get_permalink($site_page))),
+                                            'title'=> trim(get_the_title($site_page))
+                                        );
 				}
 			  }
 		}else{
@@ -184,6 +196,8 @@ class tf{
             'act'       => 'manage_pages',
             'site_page' => $pages_url
         );
+               
+               
 		$string ="token=$token&username=$username&domain=$domain";
 		$string .="&site_page=$pages_url";
 		$field_string = http_build_query($fields);
