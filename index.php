@@ -1,11 +1,14 @@
-﻿<?php 
-/* 
+<?php
+/**
+ * @package WP-Trafficfeed
+ * @version 3.3
+ */
+/*
 Plugin Name: Wp-Trafficfeed
 Description: Wordpress plugin for link exchange, automatic link exchange/automatic backlinks.
 Author: Iqbal Husain(iQ) and www.TrafficFeed.com
-Version: 3.2 
-*/ 
-
+Version: 3.3 
+*/
 class tf{
 
 	private $div_html = null;
@@ -443,6 +446,8 @@ class tf{
 	function tf_menu() {
 		add_menu_page('tf-admin-menu' , 'Trafficfeed', 'manage_options', 'tf_admin_menu', array( &$this, 'tf_help' ),plugins_url('/icon/icon.ico', __FILE__),1);
 		add_submenu_page('tf_admin_menu', 'Trafficfeed Help', 'Help', 'manage_options', 'tf_admin_menu',  array( &$this, 'tf_help' ));
+		add_submenu_page('tf_admin_menu', 'Getting started', 'Getting started', 'manage_options', 'tf_getting_started',  array( &$this, 'tf_getting_started' ));
+		
 		add_submenu_page( "tf_admin_menu", 'Manage Account', 'Manage Account', 'manage_options','tf_settings',  array($this, 'tf_settings' ));
 		add_submenu_page( null, 'TF Register', 'TF Register',  'manage_options','tf_register_form',  array($this, 'tf_register_form' ));
 		add_submenu_page( null, 'TF Login', 'TF Login', 'manage_options','tf_login_form',  array($this, 'tf_login_form' ));
@@ -460,6 +465,10 @@ class tf{
 
 	function tf_login_form(){
 		include('includes/tf-login.php');
+	}
+
+	function tf_getting_started(){
+		include('getting-started.php');
 	}
 
 	function tf_help(){
@@ -704,3 +713,4 @@ if(isset($_REQUEST['tf-dismiss']) && $_REQUEST['tf-dismiss'] = 'dismiss_tf_admin
 	update_option( 'dismiss_tf_admin_notices', "hide" );
 	echo "<script>window.location = '".admin_url()."'</script>";
 }
+?>

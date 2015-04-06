@@ -18,7 +18,7 @@
             </ul>
         </li>
     </ol>  
-    Use shortcode for display link exchanges.</li>
+   
     
 
     <h3>Link Window</h3>
