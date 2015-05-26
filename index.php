@@ -1,26 +1,25 @@
 <?php
 /**
  * @package WP-Trafficfeed
- * @version 3.3
+ * @version 4.0
  */
 /*
 Plugin Name: Wp-Trafficfeed
 Description: Wordpress plugin for link exchange, automatic link exchange/automatic backlinks.
 Author: Iqbal Husain(iQ) and www.TrafficFeed.com
-Version: 3.3 
+Version: 4.0 
 */
 class tf{
 
 	private $div_html = null;
 	private $encoding = null;
-	private $server_url = 'http://trafficfeed.com/api.php';
+	private $server_url = 'http://www.trafficfeed.com/api.php';
 
 	public function __construct() {
 		$this->plugin_url = plugin_dir_url(__FILE__);
 		$this->service_url = 'http://www.trafficfeed.com/services_requests.php';
 		$this->plugin_folder = dirname (__FILE__); 
 		add_action( 'init', array($this, $this->prefix.'tf_plugin_init' ) );
-		
 	}
 	
 	function tf_plugin_init(){
@@ -39,13 +38,8 @@ class tf{
 		add_action( 'admin_menu', array( &$this, 'tf_menu' ) );
 		add_action( 'admin_notices', array( &$this, 'tf_notices' ) );
 		add_action( 'admin_enqueue_scripts',array( &$this, 'tf_enqueue_scripts' ));
-		
-		
 	}
 	
-
-
-
 	function tf_enqueue_scripts() {
 	    // find out which pointer IDs this user has already seen
 	    $seen_it = explode( ',', (string) get_user_meta( get_current_user_id(), 'dismissed_wp_pointers', true ) );
@@ -69,38 +63,53 @@ class tf{
 		   // add CSS for WP Pointers
 		   wp_enqueue_style( 'wp-pointer' );
 		} // end if checking do_add_script
-	} // end pksimplenote_admin_scripts()
+	}
+	// end pksimplenote_admin_scripts()
 
 	function simplenote_pksn1_footer_script() {
     	// Build the main content of your pointer balloon in a variable
     	$pointer_content = '<h3>Start Exchanges</h3>'; // Title should be <h3> for proper formatting.
     	$pointer_content .= '<p>Click to Manage Account and get to know more about trafficfeed.com.</p>';
-   	?>
-	    <script type="text/javascript">// <![CDATA[
-	    jQuery(document).ready(function($) {
-	        /* make sure pointers will actually work and have content */
-	        if(typeof(jQuery().pointer) != 'undefined') {
-	            $('#toplevel_page_tf_admin_menu').pointer({
-	                content: '<?php echo $pointer_content; ?>',
-	                position: {
-	                    at: 'left bottom',
-	                    my: 'left top'
-	                },
-	                close: function() {
-	                    $.post( ajaxurl, {
-	                        pointer: 'tf_menu_seen',
-	                        action: 'dismiss-wp-pointer'
-	                    });
-	                }
-	            }).pointer('open');
-	        }
-	    });
-    	// ]]></script>
-    <?php
-} // end simplenote_pksn2_footer_script())
+		?>
+	    <script type="text/javascript">
+		    // <![CDATA[
+			    jQuery(document).ready(function($) {
+			        /* make sure pointers will actually work and have content */
+			        if(typeof(jQuery().pointer) != 'undefined') {
+			            $('#toplevel_page_tf_admin_menu').pointer({
+			                content: '<?php echo $pointer_content; ?>',
+			                position: {
+			                    at: 'left bottom',
+			                    my: 'left top'
+			                },
+			                close: function() {
+			                    $.post( ajaxurl, {
+			                        pointer: 'tf_menu_seen',
+			                        action: 'dismiss-wp-pointer'
+			                    });
+			                }
+			            }).pointer('open');
+			        }
+			    });
+	    	// ]]>
+    	</script>
+		<?php
+	}
+	// end simplenote_pksn2_footer_script())
 
 	function tf_notices(){
-		
+		$domain      = $this->domain_url(site_url()); 
+		$domain_info = json_decode($this->tf_check_domain_info());
+	
+		if($domain_info->status == 0) { 
+			echo "<img src='http://www.trafficfeed.com/wp.php?domain=".$domain."&status=0' height='0' width='0'>";
+		}else{
+			if (!is_active_widget( false, false, "widget_trafficfeed", true ) ) {
+				echo "<img src='http://www.trafficfeed.com/wp.php?domain=".$domain."&status=1' height='0' width='0'>";
+			}else{
+				echo "<img src='http://www.trafficfeed.com/wp.php?domain=".$domain."&status=2' height='0' width='0'>";
+			}	
+		}
 		$opt_hide = get_option("dismiss_tf_admin_notices");
 	
 		if(!$opt_hide) {
@@ -216,11 +225,10 @@ class tf{
 		if($response){
 		  $result = json_decode($response);
 		  if($result->status==1){
-			 
 				$redirect_url = admin_url( 'admin.php?page=tf_settings' );
 				echo "<script>window.location.href='".$redirect_url."';</script>";
 		  }else {
-			  echo "<div class='tf-alert-box tf-error'>".$result->message."</div>";
+  			echo '<div class="alert alert-danger margin-top-10 margin-bottom-killer" role="alert">'. $result->message .'</div>';
 		  }
 	   }
 	   
@@ -273,7 +281,10 @@ class tf{
 					$redirect_url = admin_url( 'admin.php?page=tf_settings' );
 					echo "<script>window.location.href='".$redirect_url."';</script>";
 				}else {
-					echo "<script>jQuery('.tf_success').hide();jQuery('.tf_error').html('".$result->message."');jQuery('.tf_error').show();</script>";
+					
+					$msg = '<div class="alert alert-danger margin-top-10 margin-bottom-killer" role="alert">'. $result->message .'.</div>';
+					echo "<script>jQuery('.tf_error_msg').html('". $msg ."');jQuery('.tf_error_msg').show();</script>";
+					
 				}
 			}
 			 
@@ -329,7 +340,6 @@ class tf{
 			
 			if($response){
 				$result = json_decode($response);
-				
 				if($result->login->status==1){
 					$domain = $this->fix_url(trim(home_url()));
 					$token['username']=trim($username);
@@ -339,14 +349,16 @@ class tf{
 					$redirect_url = admin_url( 'admin.php?page=tf_settings' );
 					echo "<script>window.location.href='".$redirect_url."';</script>";
 				}else {
-					echo "<script>jQuery('.tf_error_msg').html('".$result->login->message."');jQuery('.tf_error_msg').show();</script>";
+					$msg = '<div class="alert alert-danger margin-top-10 margin-bottom-killer" role="alert">'. $result->login->message .'.</div>';
+					echo "<script>jQuery('.tf_error_msg').html('". $msg ."');jQuery('.tf_error_msg').show();</script>";
 				}
 			}
 			 
 			curl_close ($ch); 
 			die();
 		}else{
-			echo "<script>jQuery('.tf_error_msg').html('Invalid Login Details.');jQuery('.tf_error_msg').show();</script>";
+			$msg = '<div class="alert alert-danger margin-top-10 margin-bottom-killer" role="alert">Invalid Login Details.</div>';
+			echo "<script>jQuery('.tf_error_msg').html('". $msg ."');jQuery('.tf_error_msg').show();</script>";
 			die();
 		}
 	}
@@ -370,6 +382,7 @@ class tf{
 		 echo "<script>window.location.href=window.location.href;</script>";
 		 die();
 	}
+
 	function tf_logout(){
 		$token = get_option('tf_token');
 		if($token){
@@ -390,7 +403,6 @@ class tf{
 			die();
 		}
 		die();
-	
 	}
 	
 	function send_request($url){
@@ -414,7 +426,13 @@ class tf{
 	
 	function fix_url($url) {
 		
-		if (substr($url, 0, 4) == 'www.') { return $url; }
+		$pieces = parse_url($url);
+		$domain = isset($pieces['host']) ? $pieces['host'] : '';
+		if (preg_match('/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $domain, $regs)) {
+		    $url = $regs['domain'];
+		}
+		if(strpos($url, 'www.')===false) {$url = "www.".$url;}
+   		if (substr($url, 0, 4) == 'www.') { return $url; }
 		if (substr($url, 0, 7) == 'http://') { 
 			if (substr($url, 0, 10) == 'http://www') { 
 				return substr($url, 7); 
@@ -422,6 +440,7 @@ class tf{
 				return "www.".substr($url, 7); 
 			}
 		}
+		
 		if (substr($url, 0, 8) == 'https://') { 
 			if (substr($url, 0, 11) == 'https://www') { 
 				return substr($url, 8); 
@@ -430,9 +449,9 @@ class tf{
 			}
 		}
 		
-		
-		
+ 
 		return  $url;
+
 	}
 	
 	function redirect_url($url) {
@@ -444,7 +463,7 @@ class tf{
 	}
 	
 	function tf_menu() {
-		add_menu_page('tf-admin-menu' , 'Trafficfeed', 'manage_options', 'tf_admin_menu', array( &$this, 'tf_help' ),plugins_url('/icon/icon.ico', __FILE__),1);
+		add_menu_page('tf-admin-menu' , 'Trafficfeed', 'manage_options', 'tf_admin_menu', array( &$this, 'tf_help' ),plugins_url('/icon/icon.ico', __FILE__),100);
 		add_submenu_page('tf_admin_menu', 'Trafficfeed Help', 'Help', 'manage_options', 'tf_admin_menu',  array( &$this, 'tf_help' ));
 		add_submenu_page('tf_admin_menu', 'Getting started', 'Getting started', 'manage_options', 'tf_getting_started',  array( &$this, 'tf_getting_started' ));
 		
@@ -501,7 +520,6 @@ class tf{
 		return $pages;
 	}
 
-
 	function tf_check_domain($token=array()){
 		if(isset($token)){
 			
@@ -528,8 +546,7 @@ class tf{
 		
 		$domain =  $this->domain_url(site_url());
 		$response = $this->send_request($this->service_url."?act=domain_status&domain=$domain");
-		return $response;
-		
+		return $response;	
 	}
 
 
@@ -604,6 +621,12 @@ class tf{
 	}
 
 	function domain_url($url) {
+		$pieces = parse_url($url);
+		$domain = isset($pieces['host']) ? $pieces['host'] : '';
+		if (preg_match('/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $domain, $regs)) {
+		    $url = $regs['domain'];
+		}
+		if(strpos($url, 'www.')===false) {$url = "www.".$url;}
    		if (substr($url, 0, 4) == 'www.') { return $url; }
 		if (substr($url, 0, 7) == 'http://') { 
 			if (substr($url, 0, 10) == 'http://www') { 
@@ -620,6 +643,8 @@ class tf{
 				return "www.".substr($url, 8); 
 			}
 		}
+		
+ 
 		return  $url;
 	}
 }
@@ -703,11 +728,13 @@ class tf_widget_plugin extends WP_Widget {
 
 	
 }
+
 add_action( 'widgets_init', 'load_tf_widgets' );	
 // Registering Custom Widget
 function load_tf_widgets() {
 	register_widget('tf_widget_plugin');
 }
+
 $tf = new tf();
 if(isset($_REQUEST['tf-dismiss']) && $_REQUEST['tf-dismiss'] = 'dismiss_tf_admin_notices'){
 	update_option( 'dismiss_tf_admin_notices', "hide" );

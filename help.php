@@ -1,5 +1,9 @@
+<link href="<?php echo $this->plugin_url?>/css/style.css" rel="stylesheet" />
+<link href="<?php echo $this->plugin_url?>/css/bootstrap.css" rel="stylesheet" />
 <div class="wrap">
-    <h2>Trafficfeed Help</h2>
+	<h2 class="tf_heading">Trafficfeed Help</h2>
+	<?php include('includes/tf-header.php'); ?>
+
     <h3>How to use this plugin?</h3>
     <ol>
         <li>
